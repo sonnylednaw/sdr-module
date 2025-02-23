@@ -19,7 +19,7 @@ class TurboCoder:
         if len(u.shape) == 1:
             u = [np.array(u, dtype=np.int32)]
         if u.dtype != np.float32:
-            received_bits = np.array(u, dtype=np.float32)
+            u = np.array(u, dtype=np.float32)
         return np.array(self.encoder(u).numpy()[0], dtype=np.int32)
 
     def decode(self, received_bits):
