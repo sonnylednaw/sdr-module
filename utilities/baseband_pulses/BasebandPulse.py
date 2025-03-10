@@ -11,11 +11,15 @@ class BasebandPulse(ABC):
         self.amplitude = amplitude
         self.T_sample = self.Ts / self.sps
 
-    def plot(self):
+    def calculate_pulse_parameters(self):
         h_pulse_form = self.generate_pulse()
         t = np.arange(len(h_pulse_form)) * self.T_sample
         baseband_spectrum = np.fft.fftshift(np.fft.fft(h_pulse_form))
         f = np.fft.fftshift(np.fft.fftfreq(len(h_pulse_form), d=self.T_sample))
+        return h_pulse_form, t, baseband_spectrum, f
+
+    def plot(self):
+        h_pulse_form, t, baseband_spectrum, f = self.calculate_pulse_parameters()
 
         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 5))
 
