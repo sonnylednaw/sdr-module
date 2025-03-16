@@ -36,7 +36,6 @@ class FrameParams(BaseModel):
     num_data_syms: int = Field(default=128, description="Anzahl der Datensymbole")
     mcs: ModulationCodingScheme = Field(default=ModulationCodingScheme.QPSK, description="Modulation Coding Scheme")
     sync_sec: SynchronizationSequence = Field(default=SynchronizationSequence.ZADOFF_CHU, description="Synchronisationssequenz")
-    pilot_sym: complex = Field(default=(1 / np.sqrt(2)) * (1 + 1j), description="Pilotsymbol")
     pilot_start_idx: int = Field(default=8, description="Startindex für Pilotsymbole")
     pilot_repetition: int = Field(default=10, description="Wiederholungsrate der Pilotsymbole")
 

@@ -8,6 +8,7 @@ from utilities.baseband_pulses.RaisedCosinePulse import RaisedCosinePulse
 from utilities.baseband_pulses.RectPulse import RectPulse
 from utilities.enums.BasebandPulseForm import BasebandPulseForm
 from utilities.enums.ModulationCodingScheme import ModulationCodingScheme
+from utilities.enums.ModulationCodingSchemeShift import ModulationCodingSchemeShift
 from utilities.enums.SynchronizationSequences import SynchronizationSequence
 from utilities.synchronization.SynchronizationSequences import SynchronizationSequences
 from utilities.types.IQ import IQ
@@ -66,7 +67,6 @@ class IQSender:
         # TODO: Als Aufgabe erstellen
         print("Aufgabe: Multiplexing von Piloten. Implementieren Sie die Funktion.")
         total_symbols = self.frame_params.num_data_syms
-        pilot_symbol = self.frame_params.pilot_sym
         pilot_start_idx = self.frame_params.pilot_start_idx
         pilot_repetition = self.frame_params.pilot_repetition
 
@@ -75,13 +75,17 @@ class IQSender:
         modulation_data_symbols_with_pilots = np.zeros(self.frame_params.num_data_syms, dtype=np.complex64)
 
         pilot_idx = np.arange(pilot_start_idx, total_symbols, pilot_repetition + 1)
+        pilot_seq = self.__create_pilot_seq()
 
         data_sym_idx = 0
+        j = 0
+
         zero_padding_indexes = []
 
         for i in range(len(modulation_data_symbols_with_pilots)):
             if np.isin(i, pilot_idx):
-                modulation_data_symbols_with_pilots[i] = pilot_symbol
+                modulation_data_symbols_with_pilots[i] = pilot_seq[j]
+                j += 1
             elif data_sym_idx < self.modulation_symbols.size:
                 modulation_data_symbols_with_pilots[i] = self.modulation_symbols[data_sym_idx]
                 data_sym_idx += 1
@@ -91,6 +95,21 @@ class IQSender:
                 zero_padding_indexes.append(i)
         self.modulation_symbols_with_pilots = modulation_data_symbols_with_pilots
         return self.modulation_symbols_with_pilots, np.asarray(zero_padding_indexes)
+
+    def __create_pilot_seq(self) -> NDArray[np.complex64]:
+
+        mcs_shift = {
+            ModulationCodingScheme.BPSK: ModulationCodingSchemeShift.BPSK,
+            ModulationCodingScheme.QPSK: ModulationCodingSchemeShift.QPSK,
+            ModulationCodingScheme.QAM16: ModulationCodingSchemeShift.QAM16
+        }.get(self.frame_params.mcs)
+
+        if mcs_shift is None:
+            raise ValueError("Unknown modulation coding scheme")
+
+        total_pilots = (self.frame_params.num_data_syms - self.frame_params.pilot_start_idx) // self.frame_params.pilot_repetition
+        pilot_zc_seq = SynchronizationSequences.zadoff_chu_sequence(length=total_pilots, root=25)
+        return np.roll(pilot_zc_seq, mcs_shift.value)
 
     def __create_sync_seq(self, sync_seq_type: SynchronizationSequence, length: int = 16) -> NDArray[np.complex64]:
         sync_sequences = {
