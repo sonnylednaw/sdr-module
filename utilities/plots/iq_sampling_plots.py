@@ -323,7 +323,7 @@ def plot_passband_signals(
 
 
 def plot_passband_spectrum(
-        f: np.ndarray, s_hf_spectrum: np.ndarray
+        f: np.ndarray, s_hf_spectrum: np.ndarray, fc: float
 ):
     """
     Plotte das Spektrum des Passbandsignals.
@@ -341,12 +341,12 @@ def plot_passband_spectrum(
     # Setze die y-Achsenbegrenzung
     max_val = np.max(10 * np.log10(np.abs(s_hf_spectrum) ** 2))
     plt.ylim(max_val - 100, 1.25 * max_val)
-
+    plt.xlim(-2 * fc, 2 * fc)
     plt.show()
 
 def plot_downmixed_signals(
     t: np.ndarray, hat_i_no_filter: np.ndarray, hat_i_no_filter_spectrum: np.ndarray,
-    hat_q_no_filter: np.ndarray, hat_q_no_filter_spectrum: np.ndarray, f: np.ndarray
+    hat_q_no_filter: np.ndarray, hat_q_no_filter_spectrum: np.ndarray, f: np.ndarray, fc: float
 ):
     """
     Plotte die heruntergemischten Basisbandsignale und ihre Spektren.
@@ -367,7 +367,9 @@ def plot_downmixed_signals(
     ax1.set_xlabel(r"$t$ [s]")
     ax1.set_ylabel(r"$\hat{I}_{\rm{No Filter}}(t)$")
     ax1.grid(True)
-    ax1.set_yticks([-1, -0.5, 0, 0.5, 1])
+    #ax1.set_yticks([-1, -0.5, 0, 0.5, 1])
+    y_max = np.max(np.abs(hat_i_no_filter))
+    ax1.set_ylim(-1.25*y_max, 1.25*y_max)
 
     # Plot I-Komponente im Frequenzbereich
     ax2.plot(f, 10 * np.log10(np.abs(hat_i_no_filter_spectrum) ** 2))
@@ -377,6 +379,7 @@ def plot_downmixed_signals(
     ax2.set_ylabel(r"|$\hat{I}_{\rm{No Filter}}(f)$| [dB]")
     max_val_i = np.max(10 * np.log10(np.abs(hat_i_no_filter_spectrum) ** 2))
     ax2.set_ylim(max_val_i-100, 1.25*max_val_i)
+    ax2.set_xlim(-2 * fc * 1.5, 2 * fc *1.5)
 
     # Plot Q-Komponente im Zeitbereich
     ax3.plot(t, hat_q_no_filter)
@@ -384,7 +387,9 @@ def plot_downmixed_signals(
     ax3.set_xlabel(r"$t$ [s]")
     ax3.set_ylabel(r"$\hat{Q}_{\rm{No Filter}}(t)$")
     ax3.grid(True)
-    ax3.set_yticks([-1, -0.5, 0, 0.5, 1])
+    #ax3.set_yticks([-1, -0.5, 0, 0.5, 1])
+    y_max = np.max(np.abs(hat_q_no_filter))
+    ax3.set_ylim(-1.25*y_max, 1.25*y_max)
 
     # Plot Q-Komponente im Frequenzbereich
     ax4.plot(f, 10 * np.log10(np.abs(hat_q_no_filter_spectrum) ** 2))
@@ -394,6 +399,7 @@ def plot_downmixed_signals(
     ax4.set_ylabel(r"|$\hat{Q}_{\rm{No Filter}}(f)$| [dB]")
     max_val_q = np.max(10 * np.log10(np.abs(hat_q_no_filter_spectrum) ** 2))
     ax4.set_ylim(max_val_q-100, 1.25*max_val_q)
+    ax4.set_xlim(-2 * fc * 1.5, 2 * fc * 1.5)
 
     plt.tight_layout()
     plt.show()

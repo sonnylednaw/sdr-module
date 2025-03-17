@@ -1,2 +1,4 @@
-# Ignore PyCharm IDE settings
 .idea/
+/doxygen/html/
+/02_sigmf/data
+*/.ipynb_checkpoints/
