@@ -13,7 +13,7 @@ class BasebandPulse(ABC):
 
     def calculate_pulse_parameters(self):
         h_pulse_form = self.generate_pulse()
-        t = np.arange(len(h_pulse_form)) * self.T_sample
+        t = (np.arange(self.num_samples) - self.num_samples//2) * self.T_sample
         baseband_spectrum = np.fft.fftshift(np.fft.fft(h_pulse_form))
         f = np.fft.fftshift(np.fft.fftfreq(len(h_pulse_form), d=self.T_sample))
         return h_pulse_form, t, baseband_spectrum, f

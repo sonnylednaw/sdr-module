@@ -405,7 +405,7 @@ def plot_downmixed_signals(
     plt.show()
 
 def plot_lowpass_filter(
-    f: np.ndarray, H_tp: np.ndarray
+    f: np.ndarray, H_tp: np.ndarray, border_freq: float
 ):
     """
     Plotte die Übertragungsfunktion des Tiefpassfilters.
@@ -418,6 +418,7 @@ def plot_lowpass_filter(
     plt.plot(f, H_tp)
     plt.xlabel(r"$f$ [Hz]")
     plt.ylabel(r"$|H_{\rm{TP}}(f)|$ [dB]")
+    plt.xlim(-10 * border_freq, 10 * border_freq)
     plt.grid(True)
 
 def plot_filtered_spectra(
