@@ -332,7 +332,7 @@ def plot_passband_spectrum(
     :param s_hf_spectrum: Spektrum des Passbandsignals
     """
     # Plot des Spektrums
-    plt.suptitle(r"Spektrum des Passbandsignals: $S_{\rm{HF}}(f)$")
+    plt.suptitle(r"Spektrum des Passbandsignals: $S_{\rm{HF}}(f)$ mit $f_c = $ " + f"{fc} Hz")
     plt.plot(f, 10 * np.log10(np.abs(s_hf_spectrum) ** 2))
     plt.xlabel(r"$f$ [Hz]")
     plt.ylabel(r"$| S_{\rm{HF}}(f) |$ [dB]")

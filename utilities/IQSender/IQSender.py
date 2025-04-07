@@ -132,7 +132,7 @@ class IQSender:
         if mcs_shift is None:
             raise ValueError("Unknown modulation coding scheme")
 
-        pilot_zc_seq = SynchronizationSequences.zadoff_chu_sequence(length=length, root=25)
+        pilot_zc_seq = SynchronizationSequences.zadoff_chu_sequence(length=length, root=self.frame_params.pilot_zc_root)
         return np.roll(pilot_zc_seq, mcs_shift.value)
 
     def __create_sync_seq(self, sync_seq_type: SynchronizationSequence, length: int = 16) -> NDArray[np.complex64]:
