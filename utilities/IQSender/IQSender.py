@@ -173,7 +173,7 @@ class IQSender:
         @return IQ samples without shaping.
         """
         # TODO: Aufgabe erstellen diese Methode zu implementieren
-        print("Aufgabe: Bilden Sie die Dirac-Impulsfolge mit den Modulationssymbolen.")
+
 
         modulation_symbols = self.frame_modulation_symbols
 
@@ -181,6 +181,9 @@ class IQSender:
             I=np.zeros(self.frame_modulation_symbols.size * self.baseband_params.sps),
             Q=np.zeros(self.frame_modulation_symbols.size * self.baseband_params.sps)
         )
+
+        print("Aufgabe: Bilden Sie die Dirac-Impulsfolge mit den Modulationssymbolen.")
+        # TODO: Nachfolgender Code für aufgabe 7 Entfernen
 
         t = np.arange(x_no_shaped.I.size) * self.baseband_params.T_sample
         for m in range(modulation_symbols.size):
@@ -201,13 +204,15 @@ class IQSender:
         @return Shaped IQ samples.
         """
 
-        """self.x_iq_no_shape, self.h"""
-        # TODO: Aufgabe erstellen diese Methode zu implementieren
-        print("Aufgabe: Formen Sie die Symbole mit dem Basisbandpuls.")
+        h = self.h.generate_pulse()
+        x_iq_shaped: IQ
+
+        print("Aufgabe 8: Formen Sie die Symbole mit dem Basisbandpuls.")
+        # TODO : Lösung hier entfernen
 
         x_iq_shaped = IQ(
-            I=np.convolve(self.x_iq_no_shape.I, self.h.generate_pulse()),
-            Q=np.convolve(self.x_iq_no_shape.Q, self.h.generate_pulse())
+            I=np.convolve(self.x_iq_no_shape.I, h),
+            Q=np.convolve(self.x_iq_no_shape.Q, h)
         )
 
         self.x_iq_shaped = x_iq_shaped
