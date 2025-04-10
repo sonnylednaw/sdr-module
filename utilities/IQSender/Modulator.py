@@ -1,5 +1,8 @@
+from typing import Any
+
 import numpy as np
 from matplotlib import pyplot as plt
+from numpy._typing import _32Bit
 
 from utilities.enums.ModulationCodingScheme import ModulationCodingScheme
 
@@ -9,7 +12,16 @@ class Modulator:
         pass
 
     @staticmethod
-    def qpsk_modulation(data_bits):
+    def qpsk_modulation(data_bits) -> np.ndarray[Any, np.dtype[np.complexfloating[_32Bit, _32Bit]]]:
+        """!
+        @brief QPSK Modulation
+        @param data_bits Input data bits
+        @return Modulated QPSK symbols as np.complex64 array
+        """
+        print("Aufgabe 3.2: QPSK Modulation")
+
+        # TODO: Remove solution from here
+
         # Ensure the number of bits is even
         if len(data_bits) % 2 != 0:
             data_bits = np.append(data_bits, 0)  # Pad with 0 if odd
@@ -18,7 +30,7 @@ class Modulator:
         bit_pairs = data_bits.reshape(-1, 2)
 
         # Map bit pairs to QPSK symbols: Gray Coding
-        modulation_data_symbols = np.zeros(len(bit_pairs), dtype=complex)
+        modulation_data_symbols = np.zeros(len(bit_pairs), dtype=np.complex64)
         modulation_data_symbols[np.all(bit_pairs == [0, 0], axis=1)] = (1 + 1j) / np.sqrt(2)
         modulation_data_symbols[np.all(bit_pairs == [0, 1], axis=1)] = (-1 + 1j) / np.sqrt(2)
         modulation_data_symbols[np.all(bit_pairs == [1, 1], axis=1)] = (-1 - 1j) / np.sqrt(2)
@@ -57,7 +69,16 @@ class Modulator:
         return modulation_data_symbols
 
     @staticmethod
-    def bpsk_modulation(data_bits):
+    def bpsk_modulation(data_bits) -> np.ndarray[Any, np.dtype[np.int8]]:
+        """!
+        @brief BPSK Modulation
+        @param data_bits Input data bits
+        @return Modulated BPSK symbols as numpy array
+        """
+
+        print("Aufgabe 3.1: BPSK Modulation")
+        # TODO: Remove solution from here, returning None
+
         return 2 * data_bits - 1
 
     @staticmethod

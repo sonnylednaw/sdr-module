@@ -590,7 +590,7 @@ def plot_spectra(
 
     # Setze die y-Achsenbegrenzung
     max_value = np.max(10 * np.log10(np.abs(np.fft.fft(hat_i_filtered_normalized)) ** 2))
-    plt.ylim(-70, 2 * max_value)
+    plt.ylim(-max_value, 2 * max_value)
 
     plt.grid(True)
     plt.show()

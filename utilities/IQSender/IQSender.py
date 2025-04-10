@@ -30,19 +30,19 @@ class IQSender:
         self.frame_params = frame_params
 
         self.bits = bits
-        self.h: np.array = self.__create_baseband_pulse(baseband_params)
+        self.h: np.array = self.create_baseband_pulse(baseband_params)
 
-        self.modulation_symbols: NDArray[np.complex64] = self.__modulate()
-        self.modulation_symbols_with_pilots, self.zero_pad_indexes = self.__fill_frame()
-        self.sync_seq: NDArray[np.complex64] = self.__create_sync_seq(frame_params.sync_sec, frame_params.num_sync_syms)
-        self.frame_modulation_symbols: NDArray[np.complex64] = self.__concatenate_sync_and_data_symbols()
+        self.modulation_symbols: NDArray[np.complex64] = self.modulate()
+        self.modulation_symbols_with_pilots, self.zero_pad_indexes = self.fill_frame()
+        self.sync_seq: NDArray[np.complex64] = self.create_sync_seq()
+        self.frame_modulation_symbols: NDArray[np.complex64] = self.concatenate_sync_and_data_symbols()
 
-        self.x_iq_no_shape: IQ = self.__dirac_sum_with_frame_symbols(self.frame_modulation_symbols)
+        self.x_iq_no_shape: IQ = self.dirac_sum_with_frame_symbols()
 
-        self.x_iq_shaped: IQ = self.__shape_symbols(self.x_iq_no_shape, self.h)
+        self.x_iq_shaped: IQ = self.shape_symbols()
 
 
-    def __create_baseband_pulse(self, baseband_params: BasebandParams) -> BasebandPulse:
+    def create_baseband_pulse(self, baseband_params: BasebandParams) -> BasebandPulse:
         """!
         @brief Create baseband pulse.
         @param baseband_params Baseband parameters.
@@ -62,7 +62,7 @@ class IQSender:
         self.h = pulse.generate_pulse()
         return pulse
 
-    def __modulate(self):
+    def modulate(self):
         """!
         @brief Modulates the input bits.
         @return Modulated symbols.
@@ -80,13 +80,12 @@ class IQSender:
         self.modulation_symbols = modulation_method(self.bits)
         return self.modulation_symbols
 
-    def __fill_frame(self):
+    def fill_frame(self):
         """!
         @brief Fills the frame with modulation symbols and pilots.
         @return Tuple of modulation symbols with pilots and zero padding indexes.
         """
-        # TODO: Als Aufgabe erstellen
-        print("Aufgabe: Multiplexing von Piloten. Implementieren Sie die Funktion.")
+        print("Aufgabe 4.1: Befüllung des Frames.")
         total_symbols = self.frame_params.num_data_syms
         pilot_start_idx = self.frame_params.pilot_start_idx
         pilot_repetition = self.frame_params.pilot_repetition
@@ -96,7 +95,7 @@ class IQSender:
         modulation_data_symbols_with_pilots = np.zeros(self.frame_params.num_data_syms, dtype=np.complex64)
 
         pilot_idx = np.arange(pilot_start_idx, total_symbols, pilot_repetition + 1)
-        pilot_seq = self.__create_pilot_seq(pilot_idx.size)
+        pilot_seq = self.create_pilot_seq(pilot_idx.size)
 
         data_sym_idx = 0
         j = 0
@@ -115,9 +114,10 @@ class IQSender:
                 modulation_data_symbols_with_pilots[i] = 0
                 zero_padding_indexes.append(i)
         self.modulation_symbols_with_pilots = modulation_data_symbols_with_pilots
+        # TODO: Return hier stehen lassen
         return self.modulation_symbols_with_pilots, np.asarray(zero_padding_indexes)
 
-    def __create_pilot_seq(self, length) -> NDArray[np.complex64]:
+    def create_pilot_seq(self, length) -> NDArray[np.complex64]:
         """!
         @brief Creates the pilot sequence.
         @param length Length of the pilot sequence.
@@ -135,19 +135,20 @@ class IQSender:
         pilot_zc_seq = SynchronizationSequences.zadoff_chu_sequence(length=length, root=self.frame_params.pilot_zc_root)
         return np.roll(pilot_zc_seq, mcs_shift.value)
 
-    def __create_sync_seq(self, sync_seq_type: SynchronizationSequence, length: int = 16) -> NDArray[np.complex64]:
+    def create_sync_seq(self) -> NDArray[np.complex64]:
         """!
         @brief Creates the synchronization sequence.
         @param sync_seq_type Type of synchronization sequence.
         @param length Length of the synchronization sequence.
         @return Generated synchronization sequence.
         """
+
         sync_sequences = {
-            SynchronizationSequence.ZADOFF_CHU: SynchronizationSequences.zadoff_chu_sequence(length),
-            SynchronizationSequence.M_SEQUENCE: SynchronizationSequences.generate_m_sequence(length)
+            SynchronizationSequence.ZADOFF_CHU: SynchronizationSequences.zadoff_chu_sequence(self.frame_params.num_sync_syms),
+            SynchronizationSequence.M_SEQUENCE: SynchronizationSequences.generate_m_sequence(self.frame_params.num_sync_syms)
         }
 
-        sync_sequence = sync_sequences.get(sync_seq_type)
+        sync_sequence = sync_sequences.get(self.frame_params.sync_sec)
 
         if sync_sequence is None:
             raise ValueError("Unknown synchronization sequence")
@@ -155,16 +156,17 @@ class IQSender:
         self.sync_seq = sync_sequence
         return self.sync_seq
 
-    def __concatenate_sync_and_data_symbols(self) -> NDArray[np.complex64]:
+    def concatenate_sync_and_data_symbols(self) -> NDArray[np.complex64]:
         """!
         @brief Concatenates synchronization and data symbols.
         @return Concatenated frame modulation symbols.
         """
-        print("Aufgabe: Bilden Sie die Modulationssymbole mit den Synchronisationssymbolen.")
-        self.frame_modulation_symbols = np.concatenate((self.sync_seq, self.modulation_symbols_with_pilots))
-        return self.frame_modulation_symbols
+        print("Aufgabe 6: Bilden Sie die Modulationssymbole mit den Synchronisationssymbolen.")
+        # TODO: Lösung hier entfernen
+        frame_modulation_symbols = np.concatenate((self.sync_seq, self.modulation_symbols_with_pilots))
+        return frame_modulation_symbols
 
-    def __dirac_sum_with_frame_symbols(self, modulation_symbols: NDArray[np.complex64]) -> IQ:
+    def dirac_sum_with_frame_symbols(self) -> IQ:
         """!
         @brief Forms the Dirac impulse sequence with modulation symbols.
         @param modulation_symbols Modulation symbols.
@@ -172,6 +174,8 @@ class IQSender:
         """
         # TODO: Aufgabe erstellen diese Methode zu implementieren
         print("Aufgabe: Bilden Sie die Dirac-Impulsfolge mit den Modulationssymbolen.")
+
+        modulation_symbols = self.frame_modulation_symbols
 
         x_no_shaped = IQ(
             I=np.zeros(self.frame_modulation_symbols.size * self.baseband_params.sps),
@@ -189,19 +193,21 @@ class IQSender:
 
         return self.x_iq_no_shape
 
-    def __shape_symbols(self, x_iq_no_shape: IQ, h: BasebandPulse) -> IQ:
+    def shape_symbols(self) -> IQ:
         """!
         @brief Shapes the symbols with the baseband pulse.
         @param x_iq_no_shape IQ samples without shaping.
         @param h Baseband pulse.
         @return Shaped IQ samples.
         """
+
+        """self.x_iq_no_shape, self.h"""
         # TODO: Aufgabe erstellen diese Methode zu implementieren
         print("Aufgabe: Formen Sie die Symbole mit dem Basisbandpuls.")
 
         x_iq_shaped = IQ(
-            I=np.convolve(x_iq_no_shape.I, h.generate_pulse()),
-            Q=np.convolve(x_iq_no_shape.Q, h.generate_pulse())
+            I=np.convolve(self.x_iq_no_shape.I, self.h.generate_pulse()),
+            Q=np.convolve(self.x_iq_no_shape.Q, self.h.generate_pulse())
         )
 
         self.x_iq_shaped = x_iq_shaped
