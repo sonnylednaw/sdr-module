@@ -12,6 +12,21 @@ class Modulator:
         pass
 
     @staticmethod
+    def bpsk_modulation(data_bits) -> np.ndarray[Any, np.dtype[np.int8]]:
+        """!
+        @brief BPSK Modulation
+        @param data_bits Input data bits
+        @return Modulated BPSK symbols as numpy array
+        """
+
+        print("Aufgabe 3.1: BPSK Modulation")
+        modulation_data_symbols = []
+
+        # Implement QPSK modulation
+
+        return np.asarray(modulation_data_symbols)
+
+    @staticmethod
     def qpsk_modulation(data_bits) -> np.ndarray[Any, np.dtype[np.complexfloating[_32Bit, _32Bit]]]:
         """!
         @brief QPSK Modulation
@@ -19,24 +34,11 @@ class Modulator:
         @return Modulated QPSK symbols as np.complex64 array
         """
         print("Aufgabe 3.2: QPSK Modulation")
+        modulation_data_symbols = []
 
-        # TODO: Remove solution from here
+        # Implement QPSK modulation
 
-        # Ensure the number of bits is even
-        if len(data_bits) % 2 != 0:
-            data_bits = np.append(data_bits, 0)  # Pad with 0 if odd
-
-        # Reshape the bits into pairs
-        bit_pairs = data_bits.reshape(-1, 2)
-
-        # Map bit pairs to QPSK symbols: Gray Coding
-        modulation_data_symbols = np.zeros(len(bit_pairs), dtype=np.complex64)
-        modulation_data_symbols[np.all(bit_pairs == [0, 0], axis=1)] = (1 + 1j) / np.sqrt(2)
-        modulation_data_symbols[np.all(bit_pairs == [0, 1], axis=1)] = (-1 + 1j) / np.sqrt(2)
-        modulation_data_symbols[np.all(bit_pairs == [1, 1], axis=1)] = (-1 - 1j) / np.sqrt(2)
-        modulation_data_symbols[np.all(bit_pairs == [1, 0], axis=1)] = (1 - 1j) / np.sqrt(2)
-
-        return modulation_data_symbols
+        return np.asarray(modulation_data_symbols)
 
     @staticmethod
     def qam16_modulation(data_bits):
@@ -67,19 +69,6 @@ class Modulator:
         modulation_data_symbols[np.all(bit_pairs == [1, 1, 1, 1], axis=1)] = 1 + 1j
 
         return modulation_data_symbols
-
-    @staticmethod
-    def bpsk_modulation(data_bits) -> np.ndarray[Any, np.dtype[np.int8]]:
-        """!
-        @brief BPSK Modulation
-        @param data_bits Input data bits
-        @return Modulated BPSK symbols as numpy array
-        """
-
-        print("Aufgabe 3.1: BPSK Modulation")
-        # TODO: Remove solution from here, returning None
-
-        return 2 * data_bits - 1
 
     @staticmethod
     def get_symbol_alphabet(modulation_scheme: ModulationCodingScheme):

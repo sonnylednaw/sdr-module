@@ -86,35 +86,13 @@ class IQSender:
         @return Tuple of modulation symbols with pilots and zero padding indexes.
         """
         print("Aufgabe 4.1: Befüllung des Frames.")
-        total_symbols = self.frame_params.num_data_syms
-        pilot_start_idx = self.frame_params.pilot_start_idx
-        pilot_repetition = self.frame_params.pilot_repetition
 
-        # Berechnung der Anzahl der Piloten
-
-        modulation_data_symbols_with_pilots = np.zeros(self.frame_params.num_data_syms, dtype=np.complex64)
-
-        pilot_idx = np.arange(pilot_start_idx, total_symbols, pilot_repetition + 1)
-        pilot_seq = self.create_pilot_seq(pilot_idx.size)
-
-        data_sym_idx = 0
-        j = 0
-
+        self.modulation_symbols_with_pilots = np.zeros(self.frame_params.num_data_syms, dtype=np.complex64)
+        # pilot_seq = self.create_pilot_seq(number_of_pilots)
         zero_padding_indexes = []
 
-        for i in range(len(modulation_data_symbols_with_pilots)):
-            if np.isin(i, pilot_idx):
-                modulation_data_symbols_with_pilots[i] = pilot_seq[j]
-                j += 1
-            elif data_sym_idx < self.modulation_symbols.size:
-                modulation_data_symbols_with_pilots[i] = self.modulation_symbols[data_sym_idx]
-                data_sym_idx += 1
-            else:
-                # zero padding
-                modulation_data_symbols_with_pilots[i] = 0
-                zero_padding_indexes.append(i)
-        self.modulation_symbols_with_pilots = modulation_data_symbols_with_pilots
-        # TODO: Return hier stehen lassen
+        # Fill the frame with modulation symbols and pilots
+
         return self.modulation_symbols_with_pilots, np.asarray(zero_padding_indexes)
 
     def create_pilot_seq(self, length) -> NDArray[np.complex64]:
@@ -163,8 +141,12 @@ class IQSender:
         """
         print("Aufgabe 6: Bilden Sie die Modulationssymbole mit den Synchronisationssymbolen.")
         # TODO: Lösung hier entfernen
-        frame_modulation_symbols = np.concatenate((self.sync_seq, self.modulation_symbols_with_pilots))
-        return frame_modulation_symbols
+
+        frame_modulation_symbols = []
+
+        # concatenate self.sync_seq and self.modulation_symbols_with_pilots in the return array
+
+        return np.asarray(frame_modulation_symbols, dtype=np.complex64)
 
     def dirac_sum_with_frame_symbols(self) -> IQ:
         """!
@@ -172,8 +154,8 @@ class IQSender:
         @param modulation_symbols Modulation symbols.
         @return IQ samples without shaping.
         """
-        # TODO: Aufgabe erstellen diese Methode zu implementieren
 
+        print("Aufgabe 7: Bilden Sie die Dirac-Impulsfolge mit den Modulationssymbolen.")
 
         modulation_symbols = self.frame_modulation_symbols
 
@@ -182,15 +164,9 @@ class IQSender:
             Q=np.zeros(self.frame_modulation_symbols.size * self.baseband_params.sps)
         )
 
-        print("Aufgabe: Bilden Sie die Dirac-Impulsfolge mit den Modulationssymbolen.")
-        # TODO: Nachfolgender Code für aufgabe 7 Entfernen
+        print("Aufgabe 7: Bilden Sie die Dirac-Impulsfolge mit den Modulationssymbolen.")
 
-        t = np.arange(x_no_shaped.I.size) * self.baseband_params.T_sample
-        for m in range(modulation_symbols.size):
-            x_no_shaped.I += modulation_symbols[m].real * Signals.delta_distribution(t=t,
-                                                                                     tau=m * self.baseband_params.T_s)
-            x_no_shaped.Q += modulation_symbols[m].imag * Signals.delta_distribution(t=t,
-                                                                                     tau=m * self.baseband_params.T_s)
+        # Implement the Dirac impulse sequence with modulation symbols here
 
         self.x_iq_no_shape = x_no_shaped
 
@@ -210,10 +186,10 @@ class IQSender:
         print("Aufgabe 8: Formen Sie die Symbole mit dem Basisbandpuls.")
         # TODO : Lösung hier entfernen
 
-        x_iq_shaped = IQ(
-            I=np.convolve(self.x_iq_no_shape.I, h),
-            Q=np.convolve(self.x_iq_no_shape.Q, h)
-        )
+        #x_iq_shaped = IQ(
+        #    I= # Convolve the I component with the pulse shape
+        #    Q= # Convolve the Q component with the pulse shape
+        #)
 
         self.x_iq_shaped = x_iq_shaped
         return self.x_iq_shaped

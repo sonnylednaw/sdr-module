@@ -417,7 +417,7 @@ def plot_lowpass_filter(
     plt.suptitle(r"Tiefpassfilter: $H_{\rm{TP}}(f)$")
     plt.plot(f, H_tp)
     plt.xlabel(r"$f$ [Hz]")
-    plt.ylabel(r"$|H_{\rm{TP}}(f)|$ [dB]")
+    plt.ylabel(r"$|H_{\rm{TP}}(f)|$")
     plt.xlim(-10 * border_freq, 10 * border_freq)
     plt.grid(True)
 
@@ -590,7 +590,7 @@ def plot_spectra(
 
     # Setze die y-Achsenbegrenzung
     max_value = np.max(10 * np.log10(np.abs(np.fft.fft(hat_i_filtered_normalized)) ** 2))
-    plt.ylim(-max_value, 2 * max_value)
+    plt.ylim(-4*max_value, 2 * max_value)
 
     plt.grid(True)
     plt.show()

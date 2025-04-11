@@ -49,15 +49,13 @@ class IQReceiver:
 
         print("Aufgabe 19: Korrelationsempfänger")
 
-        # TODO: Nachfolgenden Code entfernen
-
         self.corr = np.zeros(len(self.sdr_samples))
 
-        for i in range(len(self.sdr_samples) - len(self.known_sync_seq)):
-            self.corr[i] = np.dot(self.sdr_samples[i:i + len(self.known_sync_seq)],
-                             np.conjugate(self.known_sync_seq))
+        tau0 = 0
 
-        return self.corr.argmax(), self.corr
+        # Implement the correlation receiver
+
+        return tau0, self.corr
 
     def extract_frame_samples(self):
         """!
@@ -66,11 +64,10 @@ class IQReceiver:
         Output: Frame samples
         """
         print("Aufgabe 20: Extraktion der Rahmendaten")
-        # TODO: Lösung entfernen
-        return self.sdr_samples[
-                   self.tau0 + self.params.frame.num_sync_syms:
-                   self.tau0 + self.params.frame.num_sync_syms + self.params.frame.num_data_syms
-               ]
+
+        frame_samples = []
+
+        return frame_samples # should be a numpy array of complex64
 
     def demultiplex_pilots(self):
         """!
@@ -79,19 +76,10 @@ class IQReceiver:
         Output: Pilot symbols
         """
         print("Aufgabe 22: Extraktion der Pilotensequenz")
-        # TODO: Reutrn stehen lassen aber code dazwischen entfernen
-
-        pilot_start_idx = self.params.frame.pilot_start_idx
-        total_symbols = self.params.frame.num_data_syms
-        pilot_repetition = self.params.frame.pilot_repetition
 
         pilot_seq = []
 
-        pilot_idx = np.arange(pilot_start_idx, total_symbols, pilot_repetition + 1)
-
-        for i in range(len(self.frame_samples)):
-            if np.isin(i, pilot_idx):
-                pilot_seq.append(self.frame_samples[i])
+        # Implement the demultiplexing of pilot symbols from the frame samples
 
         return np.array(pilot_seq)
 
@@ -102,10 +90,9 @@ class IQReceiver:
         Output: Base pilot sequence
         """
         print("Aufgabe 21: Generierung der Basis Piloten-Sequenz")
-        total_pilots = np.arange(self.params.frame.pilot_start_idx, self.params.frame.num_data_syms,
-                                 self.params.frame.pilot_repetition + 1).size
+        pilot_seq = []
 
-        return SynchronizationSequences.zadoff_chu_sequence(length=total_pilots, root=self.params.frame.pilot_zc_root)
+        return pilot_seq # should be a numpy array of complex64
 
     def estimate_mcs_shift(self) -> tuple[np.ndarray[Any, np.dtype[np.complexfloating]], np.signedinteger]:
         """!
@@ -115,13 +102,11 @@ class IQReceiver:
         """
 
         print("Aufgabe 23: Zyklische Korrelation")
-        # TODO: Lösung entfernen, return stehen lassen
 
-        cyclic_correlation = np.fft.ifft(
-            np.fft.fft(self.base_pilot_seq) * np.fft.fft(np.conjugate(self.pilot_seq))
-        )
+        cyclic_correlation_normed = np.zeros(self.base_pilot_seq.size, dtype=np.complex64)
 
-        cyclic_correlation_normed = cyclic_correlation / np.max(cyclic_correlation)
+        # Implement the cyclic correlation calculation
+        # Norm the cyclic correlation to the maximum value
 
         return cyclic_correlation_normed, np.argmax(cyclic_correlation_normed)
 
@@ -133,7 +118,9 @@ class IQReceiver:
         """
 
         print("Aufgabe 24: Berechnung der tatsächlich verwendeten Pilotensequenz")
-        used_pilot_seq = np.roll(self.base_pilot_seq, self.mcs_shift)
+        used_pilot_seq = np.asarray([])
+
+        # Implement the calculation of the used pilot sequence
 
         return used_pilot_seq
 
@@ -144,19 +131,9 @@ class IQReceiver:
         Output: Equalized frame samples
         """
         print("Aufgabe 25: Kanalschätzung und Equalization")
-        # TODO: Lösung entfernen, return stehen lassen
         frame_samples_eq = np.zeros_like(self.frame_samples, np.complex64)
 
-        pilot_indexes = np.arange(self.params.frame.pilot_start_idx, self.params.frame.num_data_syms, self.params.frame.pilot_repetition + 1)
-
-        for pilot_idx, j in zip(pilot_indexes, range(self.used_pilot_seq.size)):
-            curr_rx_pilot = self.frame_samples[pilot_idx]
-            known_pilot = self.used_pilot_seq[j]
-
-            curr_h = (curr_rx_pilot * np.conjugate(known_pilot)) / (np.abs(known_pilot)**2)
-            data_sym_slice = slice(pilot_idx + 1, pilot_idx + self.params.frame.pilot_repetition + 1)
-            frame_samples_eq[data_sym_slice] = (self.frame_samples[data_sym_slice] * np.conjugate(curr_h)) / (np.abs(curr_h)**2)
-            frame_samples_eq[pilot_idx] = self.used_pilot_seq[j]
+        # Implement the channel equalization
             
         return frame_samples_eq
 
@@ -167,16 +144,10 @@ class IQReceiver:
         Output: Frame samples without pilot symbols
         """
         print("Aufgabe 26: Auslesen der entzerrten Datensymbole")
-        # TODO: Lösung entfernen, return stehen lassen
-
-        pilot_start_idx = self.params.frame.pilot_start_idx
-        pilot_repetition = self.params.frame.pilot_repetition
 
         modulation_data_symbols = []
 
-        for i in range(len(self.frame_samples)):
-            if (i - pilot_start_idx) % (pilot_repetition + 1) != 0:
-                modulation_data_symbols.append(self.frame_samples[i])
+        # Implement the removal of pilot symbols from the frame samples
 
         return np.array(modulation_data_symbols)
 
@@ -187,8 +158,12 @@ class IQReceiver:
         Output: Frame samples without zero-padded symbols
         """
         print("Aufgabe 27: Entfernen der Zero-Padding-Symbole")
-        # TODO: Lösung entfernen, return stehen lassen
-        return self.frame_samples_without_pilots[:self.symbols_without_zero_padding]
+
+        frame_samples_without_zero_padding_and_pilots = np.asarray([])
+
+        # Implement the removal of zero-padded symbols from the frame samples
+
+        return frame_samples_without_zero_padding_and_pilots
 
     def demodulate(self) -> ndarray[np.int8]:
         """!
