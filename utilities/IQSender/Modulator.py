@@ -22,7 +22,7 @@ class Modulator:
         print("Aufgabe 3.1: BPSK Modulation")
         modulation_data_symbols = []
 
-        # Implement QPSK modulation
+        # Implement BPSK modulation
 
         return np.asarray(modulation_data_symbols)
 
