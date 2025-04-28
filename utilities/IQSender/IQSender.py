@@ -140,7 +140,6 @@ class IQSender:
         @return Concatenated frame modulation symbols.
         """
         print("Aufgabe 6: Bilden Sie die Modulationssymbole mit den Synchronisationssymbolen.")
-        # TODO: Lösung hier entfernen
 
         frame_modulation_symbols = []
 
@@ -181,14 +180,16 @@ class IQSender:
         """
 
         h = self.h.generate_pulse()
-        x_iq_shaped: IQ
+        x_iq_shaped: IQ = IQ(
+            I=np.zeros(self.x_iq_no_shape.I.size),
+            Q=np.zeros(self.x_iq_no_shape.Q.size)
+        )
 
         print("Aufgabe 8: Formen Sie die Symbole mit dem Basisbandpuls.")
-        # TODO : Lösung hier entfernen
 
         #x_iq_shaped = IQ(
-        #    I= # Convolve the I component with the pulse shape
-        #    Q= # Convolve the Q component with the pulse shape
+        #    I= # Convolve the I component with the pulse shape as NumPy array
+        #    Q= # Convolve the Q component with the pulse shape as NumPy arrayﬁ
         #)
 
         self.x_iq_shaped = x_iq_shaped
