@@ -47,24 +47,26 @@ class Modulator:
         # Reshape the bits into pairs
         bit_pairs = data_bits.reshape(-1, 4)
 
+        norm_factor = np.sqrt(10)
+
         # Map bit pairs to QAM16 symbols
         modulation_data_symbols = np.zeros(len(bit_pairs), dtype=complex)
-        modulation_data_symbols[np.all(bit_pairs == [0, 0, 0, 0], axis=1)] = -3 - 3j
-        modulation_data_symbols[np.all(bit_pairs == [0, 0, 0, 1], axis=1)] = -3 - 1j
-        modulation_data_symbols[np.all(bit_pairs == [0, 0, 1, 0], axis=1)] = -3 + 3j
-        modulation_data_symbols[np.all(bit_pairs == [0, 0, 1, 1], axis=1)] = -3 + 1j
-        modulation_data_symbols[np.all(bit_pairs == [0, 1, 0, 0], axis=1)] = -1 - 3j
-        modulation_data_symbols[np.all(bit_pairs == [0, 1, 0, 1], axis=1)] = -1 - 1j
-        modulation_data_symbols[np.all(bit_pairs == [0, 1, 1, 0], axis=1)] = -1 + 3j
-        modulation_data_symbols[np.all(bit_pairs == [0, 1, 1, 1], axis=1)] = -1 + 1j
-        modulation_data_symbols[np.all(bit_pairs == [1, 0, 0, 0], axis=1)] = 3 - 3j
-        modulation_data_symbols[np.all(bit_pairs == [1, 0, 0, 1], axis=1)] = 3 - 1j
-        modulation_data_symbols[np.all(bit_pairs == [1, 0, 1, 0], axis=1)] = 3 + 3j
-        modulation_data_symbols[np.all(bit_pairs == [1, 0, 1, 1], axis=1)] = 3 + 1j
-        modulation_data_symbols[np.all(bit_pairs == [1, 1, 0, 0], axis=1)] = 1 - 3j
-        modulation_data_symbols[np.all(bit_pairs == [1, 1, 0, 1], axis=1)] = 1 - 1j
-        modulation_data_symbols[np.all(bit_pairs == [1, 1, 1, 0], axis=1)] = 1 + 3j
-        modulation_data_symbols[np.all(bit_pairs == [1, 1, 1, 1], axis=1)] = 1 + 1j
+        modulation_data_symbols[np.all(bit_pairs == [0, 0, 0, 0], axis=1)] = (-3 - 3j) / norm_factor
+        modulation_data_symbols[np.all(bit_pairs == [0, 0, 0, 1], axis=1)] = (-3 - 1j) / norm_factor
+        modulation_data_symbols[np.all(bit_pairs == [0, 0, 1, 0], axis=1)] = (-3 + 3j) / norm_factor
+        modulation_data_symbols[np.all(bit_pairs == [0, 0, 1, 1], axis=1)] = (-3 + 1j) / norm_factor
+        modulation_data_symbols[np.all(bit_pairs == [0, 1, 0, 0], axis=1)] = (-1 - 3j) / norm_factor
+        modulation_data_symbols[np.all(bit_pairs == [0, 1, 0, 1], axis=1)] = (-1 - 1j) / norm_factor
+        modulation_data_symbols[np.all(bit_pairs == [0, 1, 1, 0], axis=1)] = (-1 + 3j) / norm_factor
+        modulation_data_symbols[np.all(bit_pairs == [0, 1, 1, 1], axis=1)] = (-1 + 1j) / norm_factor
+        modulation_data_symbols[np.all(bit_pairs == [1, 0, 0, 0], axis=1)] = (3 - 3j) / norm_factor
+        modulation_data_symbols[np.all(bit_pairs == [1, 0, 0, 1], axis=1)] = (3 - 1j) / norm_factor
+        modulation_data_symbols[np.all(bit_pairs == [1, 0, 1, 0], axis=1)] = (3 + 3j) / norm_factor
+        modulation_data_symbols[np.all(bit_pairs == [1, 0, 1, 1], axis=1)] = (3 + 1j) / norm_factor
+        modulation_data_symbols[np.all(bit_pairs == [1, 1, 0, 0], axis=1)] = (1 - 3j) / norm_factor
+        modulation_data_symbols[np.all(bit_pairs == [1, 1, 0, 1], axis=1)] = (1 - 1j) / norm_factor
+        modulation_data_symbols[np.all(bit_pairs == [1, 1, 1, 0], axis=1)] = (1 + 3j) / norm_factor
+        modulation_data_symbols[np.all(bit_pairs == [1, 1, 1, 1], axis=1)] = (1 + 1j) / norm_factor
 
         return modulation_data_symbols
 
